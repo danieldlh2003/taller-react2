@@ -9,8 +9,7 @@ const Formulario = () => {
     unidades: "",
     codigoBarra: "",
     precio: "",
-    desechable: false,
-    material: "",
+    imagen: "",
   });
   const [modoEdicion, setModoEdicion] = React.useState(false);
   const [error, setError] = React.useState(null);
@@ -40,15 +39,17 @@ const Formulario = () => {
       !String(registro.unidades).trim() ||
       !registro.descripcion.trim() ||
       !registro.nombre.trim() ||
-      !registro.material.trim() ||
       !registro.codigoBarra.trim() ||
       !String(registro.precio).trim()
     ) {
       setError("Hay campos vacios");
       return;
+      
     }
 
     try {
+      const imagen = await fetch(
+        "https://picsum.photos/200")
       const db = firebase.firestore();
       const nuevoCarro = {
         descripcion: registro.descripcion,
@@ -56,9 +57,9 @@ const Formulario = () => {
         nombre: registro.nombre,
         codigoBarra: registro.codigoBarra,
         precio: registro.precio,
-        desechable: registro.desechable,
-        material: registro.material,
+        imagen: imagen.url,
       };
+
       await db.collection("ventas").add(nuevoCarro);
     } catch (error) {
       console.log(error);
@@ -71,8 +72,7 @@ const Formulario = () => {
       nombre: "",
       codigoBarra: "",
       precio: "",
-      desechable: false,
-      material: "",
+      imagen: "",
     });
     setError(null);
   };
@@ -99,7 +99,6 @@ const Formulario = () => {
       !String(registro.unidades).trim() ||
       !registro.descripcion.trim() ||
       !registro.nombre.trim() ||
-      !registro.material.trim() ||
       !registro.codigoBarra.trim() ||
       !String(registro.precio).trim()
     ) {
@@ -115,8 +114,7 @@ const Formulario = () => {
         nombre: registro.nombre,
         codigoBarra: registro.codigoBarra,
         precio: registro.precio,
-        desechable: registro.desechable,
-        material: registro.material,
+        imagen: registro.imagen,
       });
     } catch (error) {
       console.log(error);
@@ -127,8 +125,7 @@ const Formulario = () => {
       nombre: "",
       codigoBarra: "",
       precio: "",
-      desechable: false,
-      material: "",
+      imagen: "",
     });
     setModoEdicion(false);
     setError(null);
@@ -141,8 +138,7 @@ const Formulario = () => {
       nombre: "",
       codigoBarra: "",
       precio: "",
-      desechable: false,
-      material: "",
+      imagen: "",
     });
     setModoEdicion(false);
     setError(null);
@@ -159,11 +155,12 @@ const Formulario = () => {
             {lista.map((item) => (
               <li className="list-group-item bg-info" key={item.id}>
                 <span className="lead">
+                    
                   {item.nombre} - {item.descripcion} - {item.unidades} -{" "}
                   {item.codigoBarra} -{" "}
-                  {item.desechable === true ? "Desechable" : "No desechable"} -{" "}
-                  {item.precio} - {item.material}
+                  {item.precio} 
                 </span>
+                <img src={item.imagen}/>
                 <button
                   className="btn btn-danger btn-sm float-end mx-2"
                   onClick={() => eliminar(item.id)}
@@ -222,26 +219,6 @@ const Formulario = () => {
               }
               value={registro.codigoBarra}
             />
-
-            <div className="form-check">
-              <input
-                className="form-check-input"
-                type="checkbox"
-                id="flexCheckDefault"
-                onChange={(e) => {
-                  setRegistro({
-                    ...registro,
-                    desechable: !registro.desechable,
-                  });
-                }}
-                checked={
-                  modoEdicion ? !registro.desechable : registro.desechable
-                }
-              />
-              <label className="form-check-label" htmlFor="flexCheckDefault">
-                Es desechable ?
-              </label>
-            </div>
             <input
               className="form-control mb-2 bg-info"
               type="number"
@@ -251,15 +228,7 @@ const Formulario = () => {
               }
               value={registro.precio}
             />
-            <input
-              className="form-control mb-2 bg-info"
-              type="text"
-              placeholder="Ingrese material"
-              onChange={(e) =>
-                setRegistro({ ...registro, material: e.target.value })
-              }
-              value={registro.material}
-            />
+           
             {!modoEdicion ? (
               <button className="btn btn-primary btn-block" type="submit">
                 Agregar
