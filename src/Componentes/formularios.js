@@ -160,7 +160,7 @@ const Formulario = () => {
                   {item.codigoBarra} -{" "}
                   {item.precio} 
                 </span>
-                <img src={item.imagen}/>
+                <img src={item.imagen} alt="i"/>
                 <button
                   className="btn btn-danger btn-sm float-end mx-2"
                   onClick={() => eliminar(item.id)}
